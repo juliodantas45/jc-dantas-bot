@@ -1,5 +1,7 @@
 const venom = require('venom-bot');
 
+console.log("🚀 Bot JC Dantas iniciado");
+
 venom
   .create({
     session: 'jc-dantas-session',
@@ -7,17 +9,20 @@ venom
     useChrome: true,
     browserPath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
   })
-  .then((client) => start(client))
-  .catch((error) => console.log(error));
+  .then((client) => {
+    console.log("✅ Sessão criada com sucesso!");
+    start(client);
+  })
+  .catch((error) => {
+    console.error("❌ Erro ao criar sessão:", error);
+  });
 
 // Função principal que escuta e responde mensagens
 function start(client) {
+  console.log("🔔 Bot está ouvindo mensagens");
+
   client.onMessage((message) => {
     const texto = message.body.toLowerCase().trim();
-
-    // Responder qualquer mensagem com saudação + menu (a menos que a mensagem seja uma das opções que queremos tratar)
-    // Para mensagens que são comandos (1, 2, 3, 4, "apenas material", etc) tratamos com respostas específicas
-    // Para qualquer outra mensagem, retornamos o menu para guiar o usuário
 
     // MENU PRINCIPAL
     const menuTexto = `👋 Olá! Bem-vindo(a) à *JC Dantas Soluções Tecnológicas*.
@@ -30,7 +35,6 @@ Escolha uma opção:
 
 Digite o número da opção desejada.`;
 
-    // Opções específicas
     if (texto === 'menu' || texto === '0') {
       client.sendText(message.from, menuTexto);
       return;
@@ -98,7 +102,7 @@ Digite "0" para voltar ao menu.`
       return;
     }
 
-    // Se chegou aqui, a mensagem não é um comando conhecido — responde com a saudação + menu
+    // Se chegou aqui, mensagem desconhecida — retorna o menu
     client.sendText(message.from, menuTexto);
   });
 }
