@@ -1,20 +1,18 @@
-# Use Node 20 oficial como base
-FROM node:20-bullseye
+FROM node:20-slim
 
-# Define diretório de trabalho
 WORKDIR /app
 
-# Copia package.json e package-lock.json primeiro para instalar dependências
 COPY package*.json ./
 
-# Instala as dependências (produção)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+        libgbm1 libasound2 libpangocairo-1.0-0 libxss1 libgtk-3-0 \
+        fonts-liberation wget ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN npm install --omit=dev
 
-# Copia todo o resto do código
 COPY . .
 
-# Exponha a porta (se precisar, no seu caso provavelmente não)
-# EXPOSE 3000
-
-# Comando para rodar seu bot
 CMD ["node", "index.js"]
