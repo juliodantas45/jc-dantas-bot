@@ -1,37 +1,20 @@
-# Usa imagem oficial com Node.js 20 e Chromium
-FROM node:20-slim
+# Use Node 20 oficial como base
+FROM node:20-bullseye
 
-# Instala dependências para o Puppeteer/Chrome funcionar
-RUN apt-get update && apt-get install -y \
-  wget \
-  ca-certificates \
-  fonts-liberation \
-  libappindicator3-1 \
-  libasound2 \
-  libatk-bridge2.0-0 \
-  libatk1.0-0 \
-  libcups2 \
-  libdbus-1-3 \
-  libgdk-pixbuf2.0-0 \
-  libnspr4 \
-  libnss3 \
-  libx11-xcb1 \
-  libxcomposite1 \
-  libxdamage1 \
-  libxrandr2 \
-  xdg-utils \
-  --no-install-recommends && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Cria diretório de trabalho
+# Define diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos
+# Copia package.json e package-lock.json primeiro para instalar dependências
+COPY package*.json ./
+
+# Instala as dependências (produção)
+RUN npm install --omit=dev
+
+# Copia todo o resto do código
 COPY . .
 
-# Instala dependências
-RUN npm ci
+# Exponha a porta (se precisar, no seu caso provavelmente não)
+# EXPOSE 3000
 
-# Executa o bot
+# Comando para rodar seu bot
 CMD ["node", "index.js"]
-
