@@ -1,13 +1,13 @@
-const { create, Client } = require('venom-bot');
+const { create } = require('venom-bot');
 
 create({
   session: 'jc-dantas',
-  headless: true, // Render exige headless
+  headless: true,
   useChrome: true,
-  args: ['--no-sandbox', '--disable-setuid-sandbox'], // importante pro ambiente Render
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
 })
-.then((client) => startBot(client))
-.catch((err) => console.error('❌ Erro ao iniciar o bot:', err));
+  .then(client => startBot(client))
+  .catch(err => console.error('❌ Erro ao iniciar o bot:', err));
 
 function startBot(client) {
   console.log('🤖 Bot iniciado com sucesso!');
