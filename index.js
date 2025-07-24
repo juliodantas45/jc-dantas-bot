@@ -1,17 +1,17 @@
-const { create } = require('venom-bot');
+const venom = require('venom-bot');
 
-create({
-  headless: true,
-  browserArgs: ['--no-sandbox'],
-  puppeteerOptions: {
-    executablePath: '/usr/bin/chromium-browser'
-  }
-})
-.then((client) => start(client))
-.catch((error) => console.log(error));
+venom
+  .create({
+    headless: true,
+    browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
+  .then((client) => start(client))
+  .catch((error) => {
+    console.error('Erro ao iniciar o bot:', error);
+  });
 
 function start(client) {
-  client.onMessage(message => {
-    client.sendText(message.from, 'Olá! Este é o JC Dantas Bot 🤖');
+  client.onMessage(async (message) => {
+    await client.sendText(message.from, 'Olá! Sou o bot JC Dantas. Como posso te ajudar?');
   });
 }
