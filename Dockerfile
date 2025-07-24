@@ -1,29 +1,25 @@
-# Usa Node 18 slim para manter alinhado ao package.json
-FROM node:18-slim
+# Usa Node 20.18.1 para evitar conflitos com cheerio e outras libs
+FROM node:20.18.1
 
-# Define diretório de trabalho
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos necessários
+# Copia os arquivos de dependências e instala
 COPY package*.json ./
+RUN npm install
 
-# Evita download do Chromium pelo Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
-# Instala dependências do Puppeteer e Chromium
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libgbm1 libasound2 \
-    wget ca-certificates fonts-liberation libappindicator3-1 libxss1 \
-    lsb-release chromium \
- && npm install \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-# Copia os arquivos do projeto
+# Copia todo o projeto
 COPY . .
 
-# Expõe a porta usada (opcional)
+# Instala dependências do Chromium (obrigatórias para puppeteer no Render)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxss1 libxshmfence1 \
+    libgbm1 libasound2 libpangocairo-1.0-0 libpangoft2-1.0-0 libgtk-3-0 \
+    fonts-liberation libappindicator3-1 xdg-utils && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expõe a porta padrão (opcional, se seu bot não tem server web, pode ignorar)
 EXPOSE 3000
 
-# Comando para iniciar o bot
+# Comando para rodar o bot
 CMD ["npm", "start"]
